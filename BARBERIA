@@ -1,0 +1,86 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-register',
+  templateUrl: './register.page.html',
+  styleUrls: ['./register.page.scss'],
+})
+export class RegisterPage implements OnInit {
+
+  constructor(private http:HttpClient, private router:Router) { }
+
+  dato
+  url = "http://localhost/pruebas/index.php"
+  logForm(){
+    //console.log(this.dato);
+
+    const datosb ={"datos":this.dato};
+    this.http.post(this.url, JSON.stringify(datosb)).subscribe(data=>{
+      if(data == 1 ){
+        this.router.navigate(["datosMySQL"]);
+      }else{
+        console.log("prueba correcta por consola");
+      }
+      
+    })
+
+  }
+
+
+  ngOnInit() {
+  }
+
+}
+
+
+
+
+
+
+
+
+
+<?php
+
+$servidor = "localhost";
+$usuario = "root";
+$clave = "";
+$base = "ionic";
+
+$con = mysqli_connect($servidor,$usuario,$clave,$base) or die ("problemas de conexion");
+
+echo "prueba";
+
+?>
+
+
+
+
+
+<?php
+
+include_once("conexion.php");
+
+header("Access-Control-Allow-Origin: *");
+if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+    echo json_encode(array('status' =>false));
+    exit;
+}
+
+$postdata = file_get_contents("php://input");
+
+$datos = json_decode($postdata,true);
+
+$datosb = $datos["dato"];
+
+$query = "INSERT into estudiantes(nombres,apellidos) value = ('$datos')";
+
+echo mysqli_query($con,$query);
+
+?>
+
+
+
+
